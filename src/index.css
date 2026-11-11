@@ -1,0 +1,155 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ------------------------------------------------------------------ */
+/* Design effects ported from the CupidCreativeX site.                 */
+/* Colours come from the existing brand palette in tailwind.config.    */
+/* ------------------------------------------------------------------ */
+
+@property --fx-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@layer base {
+  :root {
+    --fx-primary: theme('colors.brand.indigo');
+    --fx-accent: theme('colors.brand.orange');
+    --fx-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+}
+
+@layer utilities {
+  /* Gradient headline text (primary -> accent, 135deg) */
+  .fx-text-gradient {
+    background: linear-gradient(135deg, var(--fx-primary), var(--fx-accent));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* Entrance + ambient animations */
+  .fx-fade-up { animation: fx-fade-up 0.6s ease backwards; }
+  .fx-fade-in { animation: fx-fade-in 0.5s ease backwards; }
+  .fx-pop-in { animation: fx-pop-in 0.38s var(--fx-ease) backwards; }
+  .fx-heading { animation: fx-heading 0.56s var(--fx-ease) backwards; }
+  .fx-pulse-slow { animation: fx-pulse-slow 4s ease-in-out infinite; }
+
+  /* Card hover: lift */
+  .fx-lift { transition: transform 0.5s var(--fx-ease); }
+
+  /* Card hover: neon border + inset glow (fades in over 500ms) */
+  .fx-neon { position: relative; }
+  .fx-neon::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    border: 1px solid color-mix(in srgb, var(--fx-primary) 45%, transparent);
+    box-shadow:
+      inset 0 0 25px color-mix(in srgb, var(--fx-primary) 18%, transparent),
+      0 15px 35px -5px color-mix(in srgb, var(--fx-primary) 30%, transparent);
+  }
+  .fx-neon:hover::before { opacity: 1; }
+
+  /* Hover: rotating rainbow ring (4s conic gradient, masked to a 2px edge) */
+  .fx-ring { position: relative; }
+  .fx-ring::after {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    padding: 2px;
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    background: conic-gradient(
+      from var(--fx-angle),
+      #f97316, #facc15, #22c55e, #06b6d4, #8b5cf6, #ec4899, #f97316
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    animation: fx-border-rotate 4s linear infinite;
+  }
+  .fx-ring:not(:disabled):hover::after,
+  .fx-ring:not(:disabled):focus-visible::after { opacity: 1; }
+
+  /* Nav-link underline: gradient bar grows from the left on hover/focus */
+  .fx-underline { position: relative; }
+  .fx-underline::after {
+    content: '';
+    position: absolute;
+    right: 0.85rem;
+    bottom: 0.35rem;
+    left: 0.85rem;
+    height: 2px;
+    border-radius: 999px;
+    pointer-events: none;
+    background: linear-gradient(90deg, var(--fx-accent), var(--fx-primary), #8b5cf6);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 220ms var(--fx-ease);
+  }
+  .fx-underline:hover::after,
+  .fx-underline:focus-visible::after { transform: scaleX(1); }
+
+  /* Button recipe: lift, brighten, glow, nudge icon, press-scale */
+  .fx-btn {
+    transition:
+      transform 180ms var(--fx-ease),
+      box-shadow 180ms ease,
+      filter 180ms ease;
+  }
+  .fx-btn svg { transition: transform 200ms var(--fx-ease); }
+  .fx-btn:not(:disabled):active { transform: scale(0.98); }
+
+  @keyframes fx-border-rotate { to { --fx-angle: 360deg; } }
+  @keyframes fx-fade-up {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fx-fade-in { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes fx-pop-in {
+    from { opacity: 0; transform: translateY(14px) scale(0.97); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  @keyframes fx-heading {
+    from { opacity: 0.72; transform: translateY(9px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fx-pulse-slow {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 0.8; }
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .fx-lift:hover { transform: translateY(-6px); }
+  .fx-btn:not(:disabled):hover {
+    transform: translateY(-2px);
+    filter: brightness(1.06);
+    box-shadow:
+      var(--tw-ring-offset-shadow, 0 0 #0000),
+      var(--tw-ring-shadow, 0 0 #0000),
+      0 8px 20px -12px color-mix(in srgb, var(--fx-primary) 75%, transparent);
+  }
+  .fx-btn:not(:disabled):hover svg { transform: translateX(2px) scale(1.06); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fx-fade-up, .fx-fade-in, .fx-pop-in, .fx-heading { animation: none; }
+  .fx-pulse-slow { animation: none; }
+  .fx-ring::after { animation: none; }
+  .fx-underline::after { transition: none; }
+  .fx-lift:hover,
+  .fx-btn:not(:disabled):hover,
+  .fx-btn:not(:disabled):active { transform: none; filter: none; }
+  .fx-btn:not(:disabled):hover svg { transform: none; }
+}

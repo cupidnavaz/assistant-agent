@@ -1,0 +1,5 @@
+[functions.chat-agent]
+verify_jwt = false
+
+[functions.team-access]
+verify_jwt = false

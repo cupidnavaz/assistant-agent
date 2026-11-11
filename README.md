@@ -1,4 +1,4 @@
-cat << 'EOF' > README.md
+
 <div align="center">
 
 # 🤖 CupidCreativeX Assistant Agent
